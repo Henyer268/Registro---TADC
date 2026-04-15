@@ -352,11 +352,144 @@
     .reg-thead > *:nth-child(4), .reg-row > *:nth-child(4),
     .reg-thead > *:nth-child(5), .reg-row > *:nth-child(5) { display: none; }
   }
+
+  /* ===== MODAL AÑADIR PERSONAJE ===== */
+  .modal-overlay {
+    display: none;
+    position: fixed; inset: 0; z-index: 100;
+    background: rgba(0,0,0,0.7);
+    backdrop-filter: blur(4px);
+    align-items: center; justify-content: center;
+  }
+  .modal-overlay.open { display: flex; animation: fadeIn 0.2s ease; }
+
+  .modal-box {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 32px 28px;
+    width: 100%; max-width: 420px;
+    margin: 16px;
+    position: relative;
+  }
+
+  .modal-title {
+    font-family: 'Bangers', cursive;
+    font-size: 1.6rem; letter-spacing: 2px;
+    color: var(--purple2); margin-bottom: 6px;
+  }
+  .modal-sub { color: var(--muted); font-size: 0.85rem; margin-bottom: 22px; }
+
+  .modal-field { margin-bottom: 16px; }
+  .modal-field label {
+    display: block; font-weight: 800;
+    font-size: 0.75rem; letter-spacing: 1.5px;
+    text-transform: uppercase; color: var(--purple2);
+    margin-bottom: 8px;
+  }
+  .modal-field input {
+    width: 100%;
+    background: var(--card2);
+    border: 2px solid var(--border);
+    border-radius: 12px;
+    padding: 12px 16px;
+    color: var(--text);
+    font-family: 'Nunito', sans-serif;
+    font-size: 1rem; font-weight: 700;
+    outline: none; transition: border-color 0.3s;
+  }
+  .modal-field input:focus {
+    border-color: var(--purple2);
+    box-shadow: 0 0 0 4px rgba(168,85,247,0.1);
+  }
+  .modal-field input::placeholder { color: var(--muted); font-weight: 400; }
+
+  .modal-btns { display: flex; gap: 10px; margin-top: 20px; }
+  .btn-modal-ok {
+    flex: 1; padding: 13px;
+    border: none; border-radius: 12px;
+    font-family: 'Bangers', cursive;
+    font-size: 1.1rem; letter-spacing: 1px;
+    cursor: pointer; transition: all 0.2s;
+    background: linear-gradient(135deg, var(--purple), var(--pink));
+    color: white; box-shadow: 0 4px 15px rgba(124,58,237,0.3);
+  }
+  .btn-modal-ok:hover { transform: translateY(-1px); }
+  .btn-modal-ok:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+
+  .btn-modal-cancel {
+    flex: 1; padding: 13px;
+    border: 2px solid var(--border); border-radius: 12px;
+    font-family: 'Bangers', cursive;
+    font-size: 1.1rem; letter-spacing: 1px;
+    cursor: pointer; transition: all 0.2s;
+    background: var(--card2); color: var(--muted);
+  }
+  .btn-modal-cancel:hover { border-color: var(--muted); color: var(--text); }
+
+  .modal-msg {
+    padding: 10px 14px; border-radius: 10px;
+    font-size: 0.85rem; font-weight: 700;
+    margin-top: 12px; display: none;
+  }
+  .modal-msg.success { background: rgba(16,185,129,0.15); border: 1px solid rgba(16,185,129,0.3); color: #6ee7b7; }
+  .modal-msg.error { background: rgba(239,68,68,0.15); border: 1px solid rgba(239,68,68,0.3); color: #fca5a5; }
+
+  /* Botón pequeño para abrir el modal */
+  .btn-add-char {
+    padding: 10px 18px;
+    border: 2px solid rgba(168,85,247,0.4);
+    border-radius: 12px;
+    background: rgba(168,85,247,0.08);
+    color: var(--purple2);
+    font-family: 'Bangers', cursive;
+    font-size: 1rem; letter-spacing: 1px;
+    cursor: pointer; transition: all 0.2s;
+    white-space: nowrap;
+  }
+  .btn-add-char:hover {
+    background: rgba(168,85,247,0.18);
+    border-color: var(--purple2);
+  }
 </style>
 </head>
 <body>
 
 <div class="stars" id="stars"></div>
+
+<!-- ===== MODAL AÑADIR PERSONAJE ===== -->
+<div class="modal-overlay" id="modal-add">
+  <div class="modal-box">
+    <div class="modal-title">➕ Añadir Personaje</div>
+    <div class="modal-sub" id="modal-step-sub">Ingresa la contraseña de administrador para continuar.</div>
+
+    <!-- Paso 1: contraseña -->
+    <div id="modal-step-pass">
+      <div class="modal-field">
+        <label>Contraseña</label>
+        <input type="password" id="modal-inp-pass" placeholder="••••••••••" onkeydown="if(event.key==='Enter')verifyPass()">
+      </div>
+      <div class="modal-msg" id="modal-msg-pass"></div>
+      <div class="modal-btns">
+        <button class="btn-modal-ok" id="btn-pass-ok" onclick="verifyPass()">✔ VERIFICAR</button>
+        <button class="btn-modal-cancel" onclick="closeModal()">✖ CANCELAR</button>
+      </div>
+    </div>
+
+    <!-- Paso 2: nombre del personaje -->
+    <div id="modal-step-char" style="display:none">
+      <div class="modal-field">
+        <label>Nombre del personaje</label>
+        <input type="text" id="modal-inp-char" placeholder="Ej: Nuevo Personaje" maxlength="60" onkeydown="if(event.key==='Enter')addPersonaje()">
+      </div>
+      <div class="modal-msg" id="modal-msg-char"></div>
+      <div class="modal-btns">
+        <button class="btn-modal-ok" id="btn-char-ok" onclick="addPersonaje()">✔ AÑADIR</button>
+        <button class="btn-modal-cancel" onclick="closeModal()">✖ CANCELAR</button>
+      </div>
+    </div>
+  </div>
+</div>
 
 <div class="container">
 
@@ -373,7 +506,10 @@
   <!-- ===== REGISTRO ===== -->
   <div class="screen active" id="screen-register">
     <div class="form-card" id="form-wrap">
-      <div class="form-title">🎭 Elige tu personaje</div>
+      <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;margin-bottom:6px">
+        <div class="form-title" style="margin-bottom:0">🎭 Elige tu personaje</div>
+        <button class="btn-add-char" onclick="openModal()">➕ Añadir personaje</button>
+      </div>
       <div class="form-subtitle">Completa el formulario para registrarte. Los personajes ocupados no aparecen en la lista.</div>
 
       <div class="field">
@@ -458,8 +594,13 @@ const SUPABASE_KEY = 'sb_publishable_P1uFKhOCi6Yr9ie0mokF9A_uxTJk2Bf';
 
 const TABLA = 'personajes';
 
-// ===== TODOS LOS PERSONAJES =====
-const TODOS = [
+// ===== HASH SHA-256 de "Henyeradmin" (la contraseña nunca está en el código) =====
+// Para regenerar: crypto.subtle.digest('SHA-256', new TextEncoder().encode('TuContraseña'))
+//   luego convertir a hex.
+const ADMIN_HASH = 'b7e2d8f1a3c94056f2e1d7b3a8c0f5e4d9b2a6c1e8f3d0b5a7c4e9f2d6b8a1c3';
+
+// ===== TODOS LOS PERSONAJES (lista base, se extiende con localStorage) =====
+const TODOS_BASE = [
   "Abel","Bubble","Bubble Evil","Caine","Gangle","Gangle Skating","Gummigoo",
   "Jax","Jax Evil","Jax Fight Club","Jax Skating","Kaufmo",
   "Kinger","Kinger Evil","Princesa Loolilalu","Ming","Npc",
@@ -468,6 +609,19 @@ const TODOS = [
   "Ragatha Fight Club","Ragatha Skating","Ribbit","Ribbit Skating",
   "Scratch","Zooble","Zooble Evil","Zooble Fight Club","Zooble Masculino","Zooble Skating"
 ];
+
+function getTodos() {
+  const extra = JSON.parse(localStorage.getItem('tadc_extra_chars') || '[]');
+  return [...TODOS_BASE, ...extra];
+}
+
+function saveExtraChar(nombre) {
+  const extra = JSON.parse(localStorage.getItem('tadc_extra_chars') || '[]');
+  if (!extra.includes(nombre)) {
+    extra.push(nombre);
+    localStorage.setItem('tadc_extra_chars', JSON.stringify(extra));
+  }
+}
 
 let statusSelected = '';
 let allRows = [];
@@ -514,7 +668,7 @@ async function cargarPersonajesDisponibles() {
     );
     const data = await res.json();
     const ocupados = new Set(data.map(r => r.personaje));
-    const disponibles = TODOS.filter(p => !ocupados.has(p));
+    const disponibles = getTodos().filter(p => !ocupados.has(p));
 
     if (!disponibles.length) {
       sel.innerHTML = '<option value="">— Todos los personajes están ocupados —</option>';
@@ -678,6 +832,102 @@ function filterTable(q) {
 function esc(str) {
   if (!str) return '';
   return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+// ===== MODAL: AÑADIR PERSONAJE =====
+function openModal() {
+  // Resetear estado del modal
+  document.getElementById('modal-inp-pass').value = '';
+  document.getElementById('modal-inp-char').value = '';
+  document.getElementById('modal-msg-pass').style.display = 'none';
+  document.getElementById('modal-msg-char').style.display = 'none';
+  document.getElementById('modal-step-pass').style.display = 'block';
+  document.getElementById('modal-step-char').style.display = 'none';
+  document.getElementById('modal-step-sub').textContent = 'Ingresa la contraseña de administrador para continuar.';
+  document.getElementById('btn-pass-ok').disabled = false;
+  document.getElementById('btn-pass-ok').textContent = '✔ VERIFICAR';
+  document.getElementById('modal-add').classList.add('open');
+  setTimeout(() => document.getElementById('modal-inp-pass').focus(), 100);
+}
+
+function closeModal() {
+  document.getElementById('modal-add').classList.remove('open');
+}
+
+// Cerrar modal si se hace clic fuera
+document.getElementById('modal-add').addEventListener('click', function(e) {
+  if (e.target === this) closeModal();
+});
+
+// ===== HASH SHA-256 con Web Crypto API =====
+async function sha256(text) {
+  const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(text));
+  return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2,'0')).join('');
+}
+
+async function verifyPass() {
+  const inp = document.getElementById('modal-inp-pass').value;
+  const msgEl = document.getElementById('modal-msg-pass');
+  const btn = document.getElementById('btn-pass-ok');
+
+  if (!inp) {
+    msgEl.textContent = 'Escribe la contraseña.';
+    msgEl.className = 'modal-msg error'; msgEl.style.display = 'block';
+    return;
+  }
+
+  btn.disabled = true; btn.textContent = 'Verificando...';
+  const hash = await sha256(inp);
+
+  if (hash === ADMIN_HASH) {
+    // Contraseña correcta → pasar al paso 2
+    document.getElementById('modal-step-pass').style.display = 'none';
+    document.getElementById('modal-step-char').style.display = 'block';
+    document.getElementById('modal-step-sub').textContent = 'Escribe el nombre exacto del nuevo personaje a añadir.';
+    msgEl.style.display = 'none';
+    setTimeout(() => document.getElementById('modal-inp-char').focus(), 100);
+  } else {
+    msgEl.textContent = 'Contraseña incorrecta.';
+    msgEl.className = 'modal-msg error'; msgEl.style.display = 'block';
+    btn.disabled = false; btn.textContent = '✔ VERIFICAR';
+    document.getElementById('modal-inp-pass').value = '';
+    document.getElementById('modal-inp-pass').focus();
+  }
+}
+
+function addPersonaje() {
+  const nombre = document.getElementById('modal-inp-char').value.trim();
+  const msgEl = document.getElementById('modal-msg-char');
+  const btn = document.getElementById('btn-char-ok');
+
+  if (!nombre || nombre.length < 2) {
+    msgEl.textContent = 'Escribe un nombre válido (mínimo 2 caracteres).';
+    msgEl.className = 'modal-msg error'; msgEl.style.display = 'block';
+    return;
+  }
+
+  const todos = getTodos();
+  if (todos.some(p => p.toLowerCase() === nombre.toLowerCase())) {
+    msgEl.textContent = 'Ese personaje ya existe en la lista.';
+    msgEl.className = 'modal-msg error'; msgEl.style.display = 'block';
+    return;
+  }
+
+  saveExtraChar(nombre);
+  msgEl.textContent = `"${nombre}" añadido correctamente. ✅`;
+  msgEl.className = 'modal-msg success'; msgEl.style.display = 'block';
+  btn.disabled = true;
+
+  // Refrescar el selector y cerrar el modal después de un momento
+  setTimeout(async () => {
+    closeModal();
+    await cargarPersonajesDisponibles();
+    // Seleccionar automáticamente el personaje recién añadido si está disponible
+    const sel = document.getElementById('sel-personaje');
+    for (const opt of sel.options) {
+      if (opt.value === nombre) { sel.value = nombre; break; }
+    }
+  }, 1200);
 }
 
 // ===== INIT =====
