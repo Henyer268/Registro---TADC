@@ -100,8 +100,10 @@
   .success-title { font-family:'Bangers',cursive; font-size:2rem; letter-spacing:2px; color:var(--green); margin-bottom:8px; }
   .success-info { color:var(--muted); font-size:0.95rem; line-height:1.6; }
   .success-personaje { font-family:'Bangers',cursive; font-size:1.5rem; color:var(--purple2); margin:12px 0; }
-  .modal-overlay { display:none; position:fixed; inset:0; z-index:100; background:rgba(0,0,0,0.7); backdrop-filter:blur(4px); align-items:center; justify-content:center; }
-  .modal-overlay.open { display:flex; animation:fadeIn 0.2s ease; }
+
+  /* ── Modal ── */
+  .modal-bg { display:none; position:fixed; inset:0; z-index:100; background:rgba(0,0,0,0.7); backdrop-filter:blur(4px); }
+  .modal-bg.open { display:flex; align-items:center; justify-content:center; animation:fadeIn 0.2s ease; }
   .modal-box { background:var(--card); border:1px solid var(--border); border-radius:20px; padding:32px 28px; width:100%; max-width:420px; margin:16px; }
   .modal-title { font-family:'Bangers',cursive; font-size:1.6rem; letter-spacing:2px; color:var(--purple2); margin-bottom:6px; }
   .modal-sub { color:var(--muted); font-size:0.85rem; margin-bottom:22px; }
@@ -137,10 +139,11 @@
 <div class="stars" id="stars"></div>
 
 <!-- MODAL AÑADIR PERSONAJE -->
-<div class="modal-overlay" id="modal-add">
+<div class="modal-bg" id="modal-add">
   <div class="modal-box">
     <div class="modal-title">➕ Añadir Personaje</div>
     <div class="modal-sub" id="modal-step-sub">Ingresa la contraseña de administrador para continuar.</div>
+
     <div id="modal-step-pass">
       <div class="modal-field">
         <label>Contraseña</label>
@@ -152,6 +155,7 @@
         <button class="btn-modal-cancel" onclick="closeModal()">✖ CANCELAR</button>
       </div>
     </div>
+
     <div id="modal-step-char" style="display:none">
       <div class="modal-field">
         <label>Nombre del personaje</label>
@@ -246,12 +250,12 @@
 <script>
 const SUPABASE_URL = 'https://goopxqkxuogqhlppsfyv.supabase.co';
 const SUPABASE_KEY = 'sb_publishable_P1uFKhOCi6Yr9ie0mokF9A_uxTJk2Bf';
-const TABLA        = 'personajes';
+const TABLA = 'personajes';
 
-// Hash SHA-256 real de "Henyeradmin"
+// Hash SHA-256 de "Henyeradmin"
 const ADMIN_HASH = '05175b9918c5f6811602bd71a5c328185853eb9738bc399ed324a6c8c975dfb2';
 
-// Lista base de personajes conocidos (solo para el selector si no están en BD)
+// Lista base fija (personajes que siempre existen aunque no estén en BD)
 const TODOS_BASE = [
   "Abel","Bubble","Bubble Evil","Caine","Gangle","Gangle Skating","Gummigoo",
   "Jax","Jax Evil","Jax Fight Club","Jax Skating","Kaufmo",
@@ -292,34 +296,45 @@ function selectStatus(el) {
   else el.classList.add('selected-parcial');
 }
 
+// ── Headers comunes Supabase ───────────────────────────────────────────────
+function sbHeaders(extra = {}) {
+  return {
+    'apikey': SUPABASE_KEY,
+    'Authorization': `Bearer ${SUPABASE_KEY}`,
+    'Content-Type': 'application/json',
+    ...extra
+  };
+}
+
 // ── Cargar personajes disponibles ──────────────────────────────────────────
-// Trae TODOS los registros de la tabla y determina cuáles están disponibles:
-//   • Los de TODOS_BASE que no tengan fila en la tabla → disponibles
-//   • Las filas con es_plantilla = true → disponibles (esperando ser reclamadas)
-//   • Las filas con es_plantilla = false (o null) → ocupados
+// Lógica:
+//   - Trae TODOS los registros reales (es_plantilla IS NULL OR false)
+//   - Trae personajes extra guardados como plantilla (es_plantilla = true)
+//   - Disponibles = (TODOS_BASE + plantillas_extra) - ocupados
 async function cargarPersonajesDisponibles() {
   const sel = document.getElementById('sel-personaje');
   sel.innerHTML = '<option value="">— Cargando... —</option>';
   try {
     const res = await fetch(
       `${SUPABASE_URL}/rest/v1/${TABLA}?select=personaje,es_plantilla`,
-      { headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}` } }
+      { headers: sbHeaders() }
     );
+    if (!res.ok) throw new Error('fetch error');
     const data = await res.json();
 
-    // Personajes que ya tienen dueño (es_plantilla = false o null)
+    // Personajes con dueño real (es_plantilla false o null)
     const ocupados = new Set(
-      data.filter(r => !r.es_plantilla).map(r => r.personaje)
+      data.filter(r => r.es_plantilla === false || r.es_plantilla === null).map(r => r.personaje)
     );
 
-    // Personajes en BD que son plantilla (disponibles, añadidos por admin)
-    const plantillasDisponibles = data
+    // Personajes extra añadidos por admin (es_plantilla = true → disponibles)
+    const extras = data
       .filter(r => r.es_plantilla === true)
       .map(r => r.personaje);
 
-    // Unión: base + plantillas de BD, filtrando los ocupados
-    const todosUnicos = [...new Set([...TODOS_BASE, ...plantillasDisponibles])];
-    const disponibles = todosUnicos.filter(p => !ocupados.has(p));
+    // Unión sin duplicados, quitando ocupados
+    const todos = [...new Set([...TODOS_BASE, ...extras])];
+    const disponibles = todos.filter(p => !ocupados.has(p)).sort();
 
     if (!disponibles.length) {
       sel.innerHTML = '<option value="">— Todos los personajes están ocupados —</option>';
@@ -344,87 +359,82 @@ async function registrar() {
   const btn       = document.getElementById('btn-registrar');
 
   document.getElementById('form-msg').style.display = 'none';
-  if (!personaje)                          return showMsg('Debes seleccionar un personaje.','error');
-  if (!edad||isNaN(edad)||edad<1||edad>99) return showMsg('Ingresa una edad válida (1-99).','error');
-  if (!nombre||nombre.length<3)            return showMsg('Ingresa tu nombre real completo.','error');
-  if (!statusSelected)                     return showMsg('Selecciona tu estado de actividad.','error');
+  if (!personaje)                           return showMsg('Debes seleccionar un personaje.','error');
+  if (!edad||isNaN(edad)||edad<1||edad>99)  return showMsg('Ingresa una edad válida (1-99).','error');
+  if (!nombre||nombre.length<3)             return showMsg('Ingresa tu nombre real completo.','error');
+  if (!statusSelected)                      return showMsg('Selecciona tu estado de actividad.','error');
 
   btn.disabled = true; btn.textContent = 'Registrando...';
 
   try {
-    // Verificar si ya existe una fila para este personaje (puede ser plantilla o no)
+    // Verificar estado actual del personaje en BD
     const checkRes = await fetch(
       `${SUPABASE_URL}/rest/v1/${TABLA}?personaje=eq.${encodeURIComponent(personaje)}&select=id,es_plantilla`,
-      { headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}` } }
+      { headers: sbHeaders() }
     );
     const existing = await checkRes.json();
 
-    if (existing.length > 0 && !existing[0].es_plantilla) {
-      // Ya está ocupado por alguien
+    // Si ya tiene dueño → rechazar
+    if (existing.length > 0 && (existing[0].es_plantilla === false || existing[0].es_plantilla === null)) {
       showMsg('¡Ese personaje acaba de ser tomado! Elige otro.','error');
       btn.disabled = false; btn.textContent = '🎪 REGISTRARME';
       await cargarPersonajesDisponibles(); return;
     }
 
-    if (existing.length > 0 && existing[0].es_plantilla) {
-      // Era una plantilla → actualizarla con los datos reales del usuario
-      const updateRes = await fetch(
+    const payload = {
+      nombre_real: nombre,
+      edad: parseInt(edad),
+      estado: statusSelected,
+      pais: '',
+      es_plantilla: false
+    };
+
+    if (existing.length > 0 && existing[0].es_plantilla === true) {
+      // Era plantilla → PATCH para convertirla en registro real
+      const patchRes = await fetch(
         `${SUPABASE_URL}/rest/v1/${TABLA}?id=eq.${existing[0].id}`,
         {
           method: 'PATCH',
-          headers: {
-            'Content-Type': 'application/json',
-            'apikey': SUPABASE_KEY,
-            'Authorization': `Bearer ${SUPABASE_KEY}`,
-            'Prefer': 'return=minimal'
-          },
-          body: JSON.stringify({
-            nombre_real: nombre,
-            edad: parseInt(edad),
-            estado: statusSelected,
-            pais: '',
-            es_plantilla: false   // ya no es plantilla, tiene dueño
-          })
+          headers: sbHeaders({ 'Prefer': 'return=representation' }),
+          body: JSON.stringify(payload)
         }
       );
-      if (!updateRes.ok) {
+      if (!patchRes.ok) {
+        const err = await patchRes.text();
+        console.error('PATCH error:', err);
         showMsg('Error al registrar. Intenta de nuevo.','error');
         btn.disabled = false; btn.textContent = '🎪 REGISTRARME'; return;
       }
+      const updated = await patchRes.json();
+      if (!updated.length || updated[0].es_plantilla !== false) {
+        showMsg('No se pudo confirmar el registro. Intenta de nuevo.','error');
+        btn.disabled = false; btn.textContent = '🎪 REGISTRARME'; return;
+      }
     } else {
-      // Personaje de la lista base, no tiene fila → INSERT normal
+      // No existe en BD → INSERT normal
       const insertRes = await fetch(`${SUPABASE_URL}/rest/v1/${TABLA}`, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'apikey': SUPABASE_KEY,
-          'Authorization': `Bearer ${SUPABASE_KEY}`,
-          'Prefer': 'return=minimal'
-        },
-        body: JSON.stringify({
-          personaje,
-          nombre_real: nombre,
-          edad: parseInt(edad),
-          estado: statusSelected,
-          pais: '',
-          es_plantilla: false
-        })
+        headers: sbHeaders({ 'Prefer': 'return=minimal' }),
+        body: JSON.stringify({ personaje, ...payload })
       });
       if (!insertRes.ok) {
+        const err = await insertRes.text();
+        console.error('INSERT error:', err);
         showMsg('Error al registrar. Intenta de nuevo.','error');
         btn.disabled = false; btn.textContent = '🎪 REGISTRARME'; return;
       }
     }
 
-    // Éxito
+    // ✅ Éxito
     document.getElementById('form-wrap').style.display = 'none';
     document.getElementById('success-wrap').style.display = 'block';
     document.getElementById('success-personaje').textContent = '🎭 ' + personaje;
     document.getElementById('success-info').innerHTML =
-      `<strong style="color:var(--text)">${nombre}</strong> fue registrado exitosamente.<br>
+      `<strong style="color:var(--text)">${esc(nombre)}</strong> fue registrado exitosamente.<br>
        Estado: <strong style="color:var(--purple2)">${statusSelected}</strong>`;
 
   } catch(e) {
+    console.error('registrar():', e);
     showMsg('Error de conexión. Verifica tu internet.','error');
     btn.disabled = false; btn.textContent = '🎪 REGISTRARME';
   }
@@ -438,18 +448,19 @@ function showMsg(txt, type) {
 function goToList() { switchTab('list'); loadRegistros(); }
 
 // ── Lista de registros ─────────────────────────────────────────────────────
-// Solo muestra filas donde es_plantilla es false o null (personas reales)
+// Solo muestra filas con es_plantilla = false o null (personas reales)
 async function loadRegistros() {
   const body = document.getElementById('reg-body');
   body.innerHTML = '<div class="loading-state"><div class="spinner"></div><p>Cargando registros...</p></div>';
   try {
     const res = await fetch(
-      `${SUPABASE_URL}/rest/v1/${TABLA}?select=*&es_plantilla=neq.true&order=created_at.asc`,
-      { headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}` } }
+      `${SUPABASE_URL}/rest/v1/${TABLA}?select=*&or=(es_plantilla.eq.false,es_plantilla.is.null)&order=created_at.asc`,
+      { headers: sbHeaders() }
     );
     if (!res.ok) throw new Error();
     allRows = await res.json();
-    renderTabla(allRows); updateStats(allRows);
+    renderTabla(allRows);
+    updateStats(allRows);
   } catch(e) {
     body.innerHTML = '<div class="empty-state"><p>⚠️ Error al cargar los registros.</p></div>';
   }
@@ -519,6 +530,7 @@ function closeModal() {
   document.getElementById('modal-add').classList.remove('open');
 }
 
+// Cerrar al hacer clic fuera del modal
 document.getElementById('modal-add').addEventListener('click', function(e) {
   if (e.target === this) closeModal();
 });
@@ -553,7 +565,10 @@ async function verifyPass() {
   }
 }
 
-// ── Añadir personaje (guarda en tabla personajes con es_plantilla=true) ────
+// ── Añadir personaje ───────────────────────────────────────────────────────
+// Guarda con es_plantilla = true → aparece en el selector pero no en la tabla
+// Si ya existe con es_plantilla = true → avisa que ya está disponible
+// Si ya está ocupado (es_plantilla = false/null) → avisa que está tomado
 async function addPersonaje() {
   const nombre = document.getElementById('modal-inp-char').value.trim();
   const msgEl  = document.getElementById('modal-msg-char');
@@ -567,71 +582,67 @@ async function addPersonaje() {
   btn.disabled = true; btn.textContent = 'Guardando...';
 
   try {
-    // ¿Ya existe en la lista base?
+    // ¿Ya está en la lista base?
     if (TODOS_BASE.some(p => p.toLowerCase() === nombre.toLowerCase())) {
       msgEl.textContent = 'Ese personaje ya existe en la lista base.';
       msgEl.className = 'modal-msg error'; msgEl.style.display = 'block';
       btn.disabled = false; btn.textContent = '✔ AÑADIR'; return;
     }
 
-    // ¿Ya existe en la tabla (como plantilla u ocupado)?
+    // Verificar si ya existe en BD
     const checkRes = await fetch(
-      `${SUPABASE_URL}/rest/v1/${TABLA}?personaje=eq.${encodeURIComponent(nombre)}&select=id`,
-      { headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}` } }
+      `${SUPABASE_URL}/rest/v1/${TABLA}?personaje=eq.${encodeURIComponent(nombre)}&select=id,es_plantilla`,
+      { headers: sbHeaders() }
     );
     const exists = await checkRes.json();
+
     if (exists.length > 0) {
-      msgEl.textContent = 'Ese personaje ya existe en la base de datos.';
+      if (exists[0].es_plantilla === true) {
+        msgEl.textContent = 'Ese personaje ya está disponible en el selector.';
+      } else {
+        msgEl.textContent = 'Ese personaje ya está ocupado por alguien.';
+      }
       msgEl.className = 'modal-msg error'; msgEl.style.display = 'block';
       btn.disabled = false; btn.textContent = '✔ AÑADIR'; return;
     }
 
-    // Insertar como plantilla (es_plantilla = true, sin datos de usuario reales)
+    // INSERT como plantilla (disponible, sin dueño)
     const insertRes = await fetch(`${SUPABASE_URL}/rest/v1/${TABLA}`, {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'apikey': SUPABASE_KEY,
-        'Authorization': `Bearer ${SUPABASE_KEY}`,
-        'Prefer': 'return=minimal'
-      },
+      headers: sbHeaders({ 'Prefer': 'return=minimal' }),
       body: JSON.stringify({
         personaje: nombre,
-        nombre_real: '',   // vacío hasta que alguien lo tome
-        edad: 0,           // placeholder
-        estado: '',        // placeholder
+        nombre_real: 'DISPONIBLE',
+        edad: 0,
+        estado: 'DISPONIBLE',
         pais: '',
         es_plantilla: true
       })
     });
 
     if (!insertRes.ok) {
-      const errTxt = await insertRes.text();
-      console.error(errTxt);
-      // Si el error es por la restricción NOT NULL de nombre_real/edad/estado,
-      // significa que aún no ejecutaste el ALTER TABLE. Mostrar aviso claro.
-      if (errTxt.includes('not-null') || errTxt.includes('null value')) {
-        msgEl.textContent = '⚠️ Ejecuta el ALTER TABLE en Supabase primero (ver instrucciones).';
-      } else {
-        msgEl.textContent = 'Error al guardar. Intenta de nuevo.';
-      }
+      const err = await insertRes.text();
+      console.error('INSERT plantilla error:', err);
+      msgEl.textContent = 'Error al guardar. Intenta de nuevo.';
       msgEl.className = 'modal-msg error'; msgEl.style.display = 'block';
       btn.disabled = false; btn.textContent = '✔ AÑADIR'; return;
     }
 
-    msgEl.textContent = `"${nombre}" añadido correctamente. ✅`;
+    msgEl.textContent = `"${nombre}" añadido al selector correctamente. ✅`;
     msgEl.className = 'modal-msg success'; msgEl.style.display = 'block';
 
     setTimeout(async () => {
       closeModal();
       await cargarPersonajesDisponibles();
+      // Seleccionar automáticamente el nuevo personaje
       const sel = document.getElementById('sel-personaje');
       for (const opt of sel.options) {
-        if (opt.value === nombre) { sel.value = nombre; break; }
+        if (opt.value.toLowerCase() === nombre.toLowerCase()) { sel.value = opt.value; break; }
       }
     }, 1200);
 
   } catch(e) {
+    console.error('addPersonaje():', e);
     msgEl.textContent = 'Error de conexión. Intenta de nuevo.';
     msgEl.className = 'modal-msg error'; msgEl.style.display = 'block';
     btn.disabled = false; btn.textContent = '✔ AÑADIR';
