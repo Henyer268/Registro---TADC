@@ -7,449 +7,128 @@
 <link href="https://fonts.googleapis.com/css2?family=Bangers&family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
 <style>
   :root {
-    --bg: #0a0a1a;
-    --card: #12122a;
-    --card2: #1a1a35;
-    --purple: #7c3aed;
-    --purple2: #a855f7;
-    --pink: #ec4899;
-    --cyan: #06b6d4;
-    --yellow: #fbbf24;
-    --green: #10b981;
-    --red: #ef4444;
-    --orange: #f97316;
-    --text: #f1f0ff;
-    --muted: #8b8aaa;
+    --bg: #0a0a1a; --card: #12122a; --card2: #1a1a35;
+    --purple: #7c3aed; --purple2: #a855f7; --pink: #ec4899;
+    --cyan: #06b6d4; --yellow: #fbbf24; --green: #10b981;
+    --red: #ef4444; --text: #f1f0ff; --muted: #8b8aaa;
     --border: rgba(124,58,237,0.3);
   }
-
-  * { margin: 0; padding: 0; box-sizing: border-box; }
-
-  body {
-    background: var(--bg);
-    color: var(--text);
-    font-family: 'Nunito', sans-serif;
-    min-height: 100vh;
-    overflow-x: hidden;
-  }
-
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { background:var(--bg); color:var(--text); font-family:'Nunito',sans-serif; min-height:100vh; overflow-x:hidden; }
   body::before {
-    content: '';
-    position: fixed;
-    inset: 0;
-    background:
-      radial-gradient(ellipse 80% 50% at 20% 20%, rgba(124,58,237,0.12) 0%, transparent 60%),
-      radial-gradient(ellipse 60% 40% at 80% 80%, rgba(236,72,153,0.08) 0%, transparent 60%);
-    pointer-events: none;
-    z-index: 0;
+    content:''; position:fixed; inset:0; pointer-events:none; z-index:0;
+    background: radial-gradient(ellipse 80% 50% at 20% 20%,rgba(124,58,237,0.12) 0%,transparent 60%),
+                radial-gradient(ellipse 60% 40% at 80% 80%,rgba(236,72,153,0.08) 0%,transparent 60%);
   }
-
-  .stars { position: fixed; inset: 0; pointer-events: none; z-index: 0; }
-  .star {
-    position: absolute; width: 2px; height: 2px;
-    background: white; border-radius: 50%;
-    animation: twinkle var(--d) ease-in-out infinite var(--delay);
-  }
-  @keyframes twinkle {
-    0%,100% { opacity: 0.2; } 50% { opacity: 1; }
-  }
-
-  .container {
-    position: relative; z-index: 1;
-    max-width: 860px; margin: 0 auto;
-    padding: 30px 20px;
-  }
-
-  /* ===== HEADER ===== */
-  .site-header { text-align: center; margin-bottom: 40px; }
-
+  .stars { position:fixed; inset:0; pointer-events:none; z-index:0; }
+  .star { position:absolute; width:2px; height:2px; background:white; border-radius:50%; animation:twinkle var(--d) ease-in-out infinite var(--delay); }
+  @keyframes twinkle { 0%,100%{opacity:0.2} 50%{opacity:1} }
+  .container { position:relative; z-index:1; max-width:860px; margin:0 auto; padding:30px 20px; }
+  .site-header { text-align:center; margin-bottom:40px; }
   .logo-title {
-    font-family: 'Bangers', cursive;
-    font-size: clamp(2rem, 7vw, 4rem);
-    letter-spacing: 3px;
-    background: linear-gradient(135deg, var(--purple2), var(--pink), var(--cyan));
-    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-    background-clip: text;
-    filter: drop-shadow(0 0 20px rgba(168,85,247,0.4));
-    animation: glow 3s ease-in-out infinite;
+    font-family:'Bangers',cursive; font-size:clamp(2rem,7vw,4rem); letter-spacing:3px;
+    background:linear-gradient(135deg,var(--purple2),var(--pink),var(--cyan));
+    -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text;
+    animation:glow 3s ease-in-out infinite;
   }
-  @keyframes glow {
-    0%,100% { filter: drop-shadow(0 0 15px rgba(168,85,247,0.3)); }
-    50% { filter: drop-shadow(0 0 30px rgba(236,72,153,0.5)); }
-  }
-
-  .logo-sub {
-    font-family: 'Bangers', cursive;
-    font-size: clamp(0.9rem, 2.5vw, 1.2rem);
-    letter-spacing: 5px; color: var(--cyan);
-    opacity: 0.8; margin-top: 6px;
-  }
-
-  /* ===== TABS ===== */
-  .tabs {
-    display: flex; gap: 8px;
-    background: var(--card);
-    border: 1px solid var(--border);
-    border-radius: 16px; padding: 6px;
-    margin-bottom: 30px;
-  }
-
-  .tab-btn {
-    flex: 1; padding: 12px;
-    border: none; border-radius: 12px;
-    font-family: 'Bangers', cursive;
-    font-size: 1.1rem; letter-spacing: 1px;
-    cursor: pointer; transition: all 0.2s;
-    background: transparent; color: var(--muted);
-  }
-
-  .tab-btn.active {
-    background: linear-gradient(135deg, var(--purple), var(--pink));
-    color: white;
-    box-shadow: 0 4px 15px rgba(124,58,237,0.4);
-  }
-
-  .tab-btn:hover:not(.active) { color: var(--text); background: var(--card2); }
-
-  /* ===== SCREENS ===== */
-  .screen { display: none; animation: fadeIn 0.3s ease; }
-  .screen.active { display: block; }
-  @keyframes fadeIn { from { opacity:0; transform:translateY(10px); } to { opacity:1; transform:translateY(0); } }
-
-  /* ===== FORM CARD ===== */
-  .form-card {
-    background: var(--card);
-    border: 1px solid var(--border);
-    border-radius: 20px;
-    padding: 32px;
-    max-width: 560px;
-    margin: 0 auto;
-  }
-
-  .form-title {
-    font-family: 'Bangers', cursive;
-    font-size: 1.8rem; letter-spacing: 2px;
-    color: var(--purple2); margin-bottom: 6px;
-  }
-
-  .form-subtitle { color: var(--muted); font-size: 0.9rem; margin-bottom: 28px; }
-
-  .field { margin-bottom: 20px; }
-
-  .field label {
-    display: block; font-weight: 800;
-    font-size: 0.8rem; letter-spacing: 1.5px;
-    text-transform: uppercase; color: var(--purple2);
-    margin-bottom: 8px;
-  }
-
-  .field input, .field select {
-    width: 100%;
-    background: var(--card2);
-    border: 2px solid var(--border);
-    border-radius: 12px;
-    padding: 13px 16px;
-    color: var(--text);
-    font-family: 'Nunito', sans-serif;
-    font-size: 1rem; font-weight: 700;
-    outline: none; transition: border-color 0.3s;
-    appearance: none;
-  }
-
-  .field input:focus, .field select:focus {
-    border-color: var(--purple2);
-    box-shadow: 0 0 0 4px rgba(168,85,247,0.1);
-  }
-
-  .field input::placeholder { color: var(--muted); font-weight: 400; }
-
-  .select-wrap { position: relative; }
-  .select-wrap::after {
-    content: '▾'; position: absolute;
-    right: 16px; top: 50%; transform: translateY(-50%);
-    color: var(--purple2); pointer-events: none;
-    font-size: 1rem;
-  }
-
-  .field select option { background: #1a1a35; color: var(--text); }
-
-  .status-grid {
-    display: grid; grid-template-columns: 1fr 1fr 1fr;
-    gap: 10px;
-  }
-
-  .status-opt {
-    padding: 14px 8px; border-radius: 12px;
-    border: 2px solid var(--border);
-    background: var(--card2);
-    cursor: pointer; text-align: center;
-    transition: all 0.2s; font-weight: 800;
-    font-size: 0.8rem; letter-spacing: 0.5px;
-    color: var(--muted);
-  }
-
-  .status-opt:hover { border-color: var(--purple2); color: var(--text); }
-  .status-opt.selected-activo { border-color: var(--green); background: rgba(16,185,129,0.15); color: #6ee7b7; }
-  .status-opt.selected-inactivo { border-color: var(--red); background: rgba(239,68,68,0.15); color: #fca5a5; }
-  .status-opt.selected-parcial { border-color: var(--yellow); background: rgba(251,191,36,0.15); color: #fde68a; }
-
-  .btn {
-    width: 100%; padding: 16px;
-    border: none; border-radius: 14px;
-    font-family: 'Bangers', cursive;
-    font-size: 1.3rem; letter-spacing: 2px;
-    cursor: pointer; transition: all 0.2s;
-    margin-top: 8px;
-  }
-
-  .btn-primary {
-    background: linear-gradient(135deg, var(--purple), var(--pink));
-    color: white; box-shadow: 0 4px 20px rgba(124,58,237,0.4);
-  }
-  .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 30px rgba(124,58,237,0.5); }
-  .btn-primary:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
-
-  .msg {
-    padding: 14px 18px; border-radius: 12px;
-    font-size: 0.9rem; font-weight: 700;
-    margin-top: 14px; display: none;
-    animation: fadeIn 0.3s ease;
-  }
-  .msg.success { background: rgba(16,185,129,0.15); border: 1px solid rgba(16,185,129,0.3); color: #6ee7b7; }
-  .msg.error { background: rgba(239,68,68,0.15); border: 1px solid rgba(239,68,68,0.3); color: #fca5a5; }
-
-  /* ===== TABLA ===== */
-  .table-header-row {
-    display: flex; align-items: center;
-    justify-content: space-between;
-    margin-bottom: 20px; gap: 12px; flex-wrap: wrap;
-  }
-
-  .table-title {
-    font-family: 'Bangers', cursive;
-    font-size: 1.8rem; letter-spacing: 2px; color: var(--yellow);
-  }
-
-  .search-box {
-    background: var(--card);
-    border: 1px solid var(--border);
-    border-radius: 10px; padding: 10px 16px;
-    color: var(--text); font-family: 'Nunito', sans-serif;
-    font-size: 0.9rem; font-weight: 700;
-    outline: none; width: 200px; transition: border-color 0.3s;
-  }
-  .search-box:focus { border-color: var(--purple2); }
-  .search-box::placeholder { color: var(--muted); font-weight: 400; }
-
-  .stats-strip {
-    display: grid; grid-template-columns: repeat(4, 1fr);
-    gap: 10px; margin-bottom: 20px;
-  }
-
-  @media(max-width:500px) { .stats-strip { grid-template-columns: 1fr 1fr; } }
-
-  .stat-chip {
-    background: var(--card);
-    border: 1px solid var(--border);
-    border-radius: 12px; padding: 14px 10px;
-    text-align: center;
-  }
-  .stat-chip-val {
-    font-family: 'Bangers', cursive;
-    font-size: 1.6rem; letter-spacing: 1px;
-  }
-  .stat-chip-lbl { font-size: 0.7rem; color: var(--muted); font-weight: 800; text-transform: uppercase; letter-spacing: 1px; }
-
-  .reg-table {
-    background: var(--card);
-    border: 1px solid var(--border);
-    border-radius: 20px; overflow: hidden;
-  }
-
-  .reg-thead {
-    display: grid;
-    grid-template-columns: 40px 1fr 1fr 80px 90px;
-    padding: 12px 16px;
-    background: var(--card2);
-    border-bottom: 1px solid var(--border);
-    font-size: 0.7rem; font-weight: 800;
-    text-transform: uppercase; letter-spacing: 1px;
-    color: var(--muted);
-  }
-
-  .reg-row {
-    display: grid;
-    grid-template-columns: 40px 1fr 1fr 80px 90px;
-    padding: 14px 16px;
-    border-bottom: 1px solid rgba(124,58,237,0.08);
-    align-items: center;
-    transition: background 0.2s;
-    animation: fadeIn 0.3s ease;
-  }
-  .reg-row:last-child { border-bottom: none; }
-  .reg-row:hover { background: rgba(168,85,247,0.05); }
-
-  .row-num {
-    font-family: 'Bangers', cursive;
-    font-size: 1rem; color: var(--muted); letter-spacing: 1px;
-  }
-
-  .row-personaje { font-weight: 800; font-size: 0.9rem; }
-  .row-nombre { font-size: 0.85rem; color: var(--muted); font-weight: 700; }
-  .row-edad { font-family: 'Bangers', cursive; font-size: 1.1rem; color: var(--cyan); text-align: center; }
-  .row-pais { font-size: 0.8rem; font-weight: 700; text-align: center; }
-
-  .status-badge {
-    font-size: 0.68rem; font-weight: 800;
-    padding: 4px 8px; border-radius: 8px;
-    text-align: center; letter-spacing: 0.5px;
-    text-transform: uppercase;
-  }
-  .badge-activo { background: rgba(16,185,129,0.2); color: #6ee7b7; }
-  .badge-inactivo { background: rgba(239,68,68,0.2); color: #fca5a5; }
-  .badge-parcial { background: rgba(251,191,36,0.2); color: #fde68a; }
-
-  .loading-state { text-align: center; padding: 40px; color: var(--muted); }
-  .spinner {
-    width: 28px; height: 28px;
-    border: 3px solid var(--border);
-    border-top-color: var(--purple2);
-    border-radius: 50%;
-    animation: spin 0.8s linear infinite;
-    margin: 0 auto 12px;
-  }
-  @keyframes spin { to { transform: rotate(360deg); } }
-
-  .empty-state { text-align: center; padding: 50px 20px; color: var(--muted); }
-  .empty-state .big { font-size: 3rem; margin-bottom: 10px; }
-
-  /* Success screen */
-  .success-card {
-    background: var(--card);
-    border: 2px solid rgba(16,185,129,0.3);
-    border-radius: 20px; padding: 40px 30px;
-    text-align: center; max-width: 460px; margin: 0 auto;
-  }
-  .success-icon { font-size: 4rem; margin-bottom: 16px; animation: bounce 2s ease-in-out infinite; }
-  @keyframes bounce { 0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)} }
-  .success-title { font-family: 'Bangers', cursive; font-size: 2rem; letter-spacing: 2px; color: var(--green); margin-bottom: 8px; }
-  .success-info { color: var(--muted); font-size: 0.95rem; line-height: 1.6; }
-  .success-personaje { font-family: 'Bangers', cursive; font-size: 1.5rem; color: var(--purple2); margin: 12px 0; }
-
-  .btn-outline {
-    background: var(--card2); border: 2px solid var(--border);
-    color: var(--purple2); width: auto; padding: 12px 28px;
-    margin-top: 20px; display: inline-block;
-  }
-  .btn-outline:hover { border-color: var(--purple2); }
-
+  @keyframes glow { 0%,100%{filter:drop-shadow(0 0 15px rgba(168,85,247,0.3))} 50%{filter:drop-shadow(0 0 30px rgba(236,72,153,0.5))} }
+  .logo-sub { font-family:'Bangers',cursive; font-size:clamp(0.9rem,2.5vw,1.2rem); letter-spacing:5px; color:var(--cyan); opacity:0.8; margin-top:6px; }
+  .tabs { display:flex; gap:8px; background:var(--card); border:1px solid var(--border); border-radius:16px; padding:6px; margin-bottom:30px; }
+  .tab-btn { flex:1; padding:12px; border:none; border-radius:12px; font-family:'Bangers',cursive; font-size:1.1rem; letter-spacing:1px; cursor:pointer; transition:all 0.2s; background:transparent; color:var(--muted); }
+  .tab-btn.active { background:linear-gradient(135deg,var(--purple),var(--pink)); color:white; box-shadow:0 4px 15px rgba(124,58,237,0.4); }
+  .tab-btn:hover:not(.active) { color:var(--text); background:var(--card2); }
+  .screen { display:none; animation:fadeIn 0.3s ease; }
+  .screen.active { display:block; }
+  @keyframes fadeIn { from{opacity:0;transform:translateY(10px)} to{opacity:1;transform:translateY(0)} }
+  .form-card { background:var(--card); border:1px solid var(--border); border-radius:20px; padding:32px; max-width:560px; margin:0 auto; }
+  .form-title { font-family:'Bangers',cursive; font-size:1.8rem; letter-spacing:2px; color:var(--purple2); margin-bottom:6px; }
+  .form-subtitle { color:var(--muted); font-size:0.9rem; margin-bottom:28px; }
+  .field { margin-bottom:20px; }
+  .field label { display:block; font-weight:800; font-size:0.8rem; letter-spacing:1.5px; text-transform:uppercase; color:var(--purple2); margin-bottom:8px; }
+  .field input, .field select { width:100%; background:var(--card2); border:2px solid var(--border); border-radius:12px; padding:13px 16px; color:var(--text); font-family:'Nunito',sans-serif; font-size:1rem; font-weight:700; outline:none; transition:border-color 0.3s; appearance:none; }
+  .field input:focus, .field select:focus { border-color:var(--purple2); box-shadow:0 0 0 4px rgba(168,85,247,0.1); }
+  .field input::placeholder { color:var(--muted); font-weight:400; }
+  .select-wrap { position:relative; }
+  .select-wrap::after { content:'▾'; position:absolute; right:16px; top:50%; transform:translateY(-50%); color:var(--purple2); pointer-events:none; }
+  .field select option { background:#1a1a35; color:var(--text); }
+  .status-grid { display:grid; grid-template-columns:1fr 1fr 1fr; gap:10px; }
+  .status-opt { padding:14px 8px; border-radius:12px; border:2px solid var(--border); background:var(--card2); cursor:pointer; text-align:center; transition:all 0.2s; font-weight:800; font-size:0.8rem; letter-spacing:0.5px; color:var(--muted); }
+  .status-opt:hover { border-color:var(--purple2); color:var(--text); }
+  .status-opt.selected-activo { border-color:var(--green); background:rgba(16,185,129,0.15); color:#6ee7b7; }
+  .status-opt.selected-inactivo { border-color:var(--red); background:rgba(239,68,68,0.15); color:#fca5a5; }
+  .status-opt.selected-parcial { border-color:var(--yellow); background:rgba(251,191,36,0.15); color:#fde68a; }
+  .btn { width:100%; padding:16px; border:none; border-radius:14px; font-family:'Bangers',cursive; font-size:1.3rem; letter-spacing:2px; cursor:pointer; transition:all 0.2s; margin-top:8px; }
+  .btn-primary { background:linear-gradient(135deg,var(--purple),var(--pink)); color:white; box-shadow:0 4px 20px rgba(124,58,237,0.4); }
+  .btn-primary:hover { transform:translateY(-2px); box-shadow:0 8px 30px rgba(124,58,237,0.5); }
+  .btn-primary:disabled { opacity:0.5; cursor:not-allowed; transform:none; }
+  .btn-outline { background:var(--card2); border:2px solid var(--border); color:var(--purple2); width:auto; padding:12px 28px; margin-top:20px; display:inline-block; }
+  .btn-outline:hover { border-color:var(--purple2); }
+  .msg { padding:14px 18px; border-radius:12px; font-size:0.9rem; font-weight:700; margin-top:14px; display:none; animation:fadeIn 0.3s ease; }
+  .msg.success { background:rgba(16,185,129,0.15); border:1px solid rgba(16,185,129,0.3); color:#6ee7b7; }
+  .msg.error { background:rgba(239,68,68,0.15); border:1px solid rgba(239,68,68,0.3); color:#fca5a5; }
+  .table-header-row { display:flex; align-items:center; justify-content:space-between; margin-bottom:20px; gap:12px; flex-wrap:wrap; }
+  .table-title { font-family:'Bangers',cursive; font-size:1.8rem; letter-spacing:2px; color:var(--yellow); }
+  .search-box { background:var(--card); border:1px solid var(--border); border-radius:10px; padding:10px 16px; color:var(--text); font-family:'Nunito',sans-serif; font-size:0.9rem; font-weight:700; outline:none; width:200px; transition:border-color 0.3s; }
+  .search-box:focus { border-color:var(--purple2); }
+  .search-box::placeholder { color:var(--muted); font-weight:400; }
+  .stats-strip { display:grid; grid-template-columns:repeat(4,1fr); gap:10px; margin-bottom:20px; }
+  @media(max-width:500px) { .stats-strip { grid-template-columns:1fr 1fr; } }
+  .stat-chip { background:var(--card); border:1px solid var(--border); border-radius:12px; padding:14px 10px; text-align:center; }
+  .stat-chip-val { font-family:'Bangers',cursive; font-size:1.6rem; letter-spacing:1px; }
+  .stat-chip-lbl { font-size:0.7rem; color:var(--muted); font-weight:800; text-transform:uppercase; letter-spacing:1px; }
+  .reg-table { background:var(--card); border:1px solid var(--border); border-radius:20px; overflow:hidden; }
+  .reg-thead { display:grid; grid-template-columns:40px 1fr 1fr 80px 90px; padding:12px 16px; background:var(--card2); border-bottom:1px solid var(--border); font-size:0.7rem; font-weight:800; text-transform:uppercase; letter-spacing:1px; color:var(--muted); }
+  .reg-row { display:grid; grid-template-columns:40px 1fr 1fr 80px 90px; padding:14px 16px; border-bottom:1px solid rgba(124,58,237,0.08); align-items:center; transition:background 0.2s; animation:fadeIn 0.3s ease; }
+  .reg-row:last-child { border-bottom:none; }
+  .reg-row:hover { background:rgba(168,85,247,0.05); }
+  .row-num { font-family:'Bangers',cursive; font-size:1rem; color:var(--muted); }
+  .row-personaje { font-weight:800; font-size:0.9rem; }
+  .row-nombre { font-size:0.85rem; color:var(--muted); font-weight:700; }
+  .row-pais { font-size:0.8rem; font-weight:700; text-align:center; }
+  .status-badge { font-size:0.68rem; font-weight:800; padding:4px 8px; border-radius:8px; text-align:center; letter-spacing:0.5px; text-transform:uppercase; }
+  .badge-activo { background:rgba(16,185,129,0.2); color:#6ee7b7; }
+  .badge-inactivo { background:rgba(239,68,68,0.2); color:#fca5a5; }
+  .badge-parcial { background:rgba(251,191,36,0.2); color:#fde68a; }
+  .loading-state { text-align:center; padding:40px; color:var(--muted); }
+  .spinner { width:28px; height:28px; border:3px solid var(--border); border-top-color:var(--purple2); border-radius:50%; animation:spin 0.8s linear infinite; margin:0 auto 12px; }
+  @keyframes spin { to{transform:rotate(360deg)} }
+  .empty-state { text-align:center; padding:50px 20px; color:var(--muted); }
+  .empty-state .big { font-size:3rem; margin-bottom:10px; }
+  .success-card { background:var(--card); border:2px solid rgba(16,185,129,0.3); border-radius:20px; padding:40px 30px; text-align:center; max-width:460px; margin:0 auto; }
+  .success-icon { font-size:4rem; margin-bottom:16px; animation:bounce 2s ease-in-out infinite; }
+  @keyframes bounce { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-10px)} }
+  .success-title { font-family:'Bangers',cursive; font-size:2rem; letter-spacing:2px; color:var(--green); margin-bottom:8px; }
+  .success-info { color:var(--muted); font-size:0.95rem; line-height:1.6; }
+  .success-personaje { font-family:'Bangers',cursive; font-size:1.5rem; color:var(--purple2); margin:12px 0; }
+  .modal-overlay { display:none; position:fixed; inset:0; z-index:100; background:rgba(0,0,0,0.7); backdrop-filter:blur(4px); align-items:center; justify-content:center; }
+  .modal-overlay.open { display:flex; animation:fadeIn 0.2s ease; }
+  .modal-box { background:var(--card); border:1px solid var(--border); border-radius:20px; padding:32px 28px; width:100%; max-width:420px; margin:16px; }
+  .modal-title { font-family:'Bangers',cursive; font-size:1.6rem; letter-spacing:2px; color:var(--purple2); margin-bottom:6px; }
+  .modal-sub { color:var(--muted); font-size:0.85rem; margin-bottom:22px; }
+  .modal-field { margin-bottom:16px; }
+  .modal-field label { display:block; font-weight:800; font-size:0.75rem; letter-spacing:1.5px; text-transform:uppercase; color:var(--purple2); margin-bottom:8px; }
+  .modal-field input { width:100%; background:var(--card2); border:2px solid var(--border); border-radius:12px; padding:12px 16px; color:var(--text); font-family:'Nunito',sans-serif; font-size:1rem; font-weight:700; outline:none; transition:border-color 0.3s; }
+  .modal-field input:focus { border-color:var(--purple2); box-shadow:0 0 0 4px rgba(168,85,247,0.1); }
+  .modal-field input::placeholder { color:var(--muted); font-weight:400; }
+  .modal-btns { display:flex; gap:10px; margin-top:20px; }
+  .btn-modal-ok { flex:1; padding:13px; border:none; border-radius:12px; font-family:'Bangers',cursive; font-size:1.1rem; letter-spacing:1px; cursor:pointer; transition:all 0.2s; background:linear-gradient(135deg,var(--purple),var(--pink)); color:white; box-shadow:0 4px 15px rgba(124,58,237,0.3); }
+  .btn-modal-ok:hover { transform:translateY(-1px); }
+  .btn-modal-ok:disabled { opacity:0.5; cursor:not-allowed; transform:none; }
+  .btn-modal-cancel { flex:1; padding:13px; border:2px solid var(--border); border-radius:12px; font-family:'Bangers',cursive; font-size:1.1rem; letter-spacing:1px; cursor:pointer; transition:all 0.2s; background:var(--card2); color:var(--muted); }
+  .btn-modal-cancel:hover { border-color:var(--muted); color:var(--text); }
+  .modal-msg { padding:10px 14px; border-radius:10px; font-size:0.85rem; font-weight:700; margin-top:12px; display:none; }
+  .modal-msg.success { background:rgba(16,185,129,0.15); border:1px solid rgba(16,185,129,0.3); color:#6ee7b7; }
+  .modal-msg.error { background:rgba(239,68,68,0.15); border:1px solid rgba(239,68,68,0.3); color:#fca5a5; }
+  .btn-add-char { padding:10px 18px; border:2px solid rgba(168,85,247,0.4); border-radius:12px; background:rgba(168,85,247,0.08); color:var(--purple2); font-family:'Bangers',cursive; font-size:1rem; letter-spacing:1px; cursor:pointer; transition:all 0.2s; white-space:nowrap; }
+  .btn-add-char:hover { background:rgba(168,85,247,0.18); border-color:var(--purple2); }
   @media(max-width:640px) {
-    .reg-thead, .reg-row { grid-template-columns: 36px 1fr 1fr 70px; }
-    .reg-thead > *:nth-child(5), .reg-row > *:nth-child(5) { display: none; }
+    .reg-thead, .reg-row { grid-template-columns:36px 1fr 1fr 70px; }
+    .reg-thead > *:nth-child(5), .reg-row > *:nth-child(5) { display:none; }
   }
   @media(max-width:440px) {
-    .reg-thead, .reg-row { grid-template-columns: 30px 1fr 1fr; }
+    .reg-thead, .reg-row { grid-template-columns:30px 1fr 1fr; }
     .reg-thead > *:nth-child(4), .reg-row > *:nth-child(4),
-    .reg-thead > *:nth-child(5), .reg-row > *:nth-child(5) { display: none; }
-  }
-
-  /* ===== MODAL AÑADIR PERSONAJE ===== */
-  .modal-overlay {
-    display: none;
-    position: fixed; inset: 0; z-index: 100;
-    background: rgba(0,0,0,0.7);
-    backdrop-filter: blur(4px);
-    align-items: center; justify-content: center;
-  }
-  .modal-overlay.open { display: flex; animation: fadeIn 0.2s ease; }
-
-  .modal-box {
-    background: var(--card);
-    border: 1px solid var(--border);
-    border-radius: 20px;
-    padding: 32px 28px;
-    width: 100%; max-width: 420px;
-    margin: 16px;
-    position: relative;
-  }
-
-  .modal-title {
-    font-family: 'Bangers', cursive;
-    font-size: 1.6rem; letter-spacing: 2px;
-    color: var(--purple2); margin-bottom: 6px;
-  }
-  .modal-sub { color: var(--muted); font-size: 0.85rem; margin-bottom: 22px; }
-
-  .modal-field { margin-bottom: 16px; }
-  .modal-field label {
-    display: block; font-weight: 800;
-    font-size: 0.75rem; letter-spacing: 1.5px;
-    text-transform: uppercase; color: var(--purple2);
-    margin-bottom: 8px;
-  }
-  .modal-field input {
-    width: 100%;
-    background: var(--card2);
-    border: 2px solid var(--border);
-    border-radius: 12px;
-    padding: 12px 16px;
-    color: var(--text);
-    font-family: 'Nunito', sans-serif;
-    font-size: 1rem; font-weight: 700;
-    outline: none; transition: border-color 0.3s;
-  }
-  .modal-field input:focus {
-    border-color: var(--purple2);
-    box-shadow: 0 0 0 4px rgba(168,85,247,0.1);
-  }
-  .modal-field input::placeholder { color: var(--muted); font-weight: 400; }
-
-  .modal-btns { display: flex; gap: 10px; margin-top: 20px; }
-  .btn-modal-ok {
-    flex: 1; padding: 13px;
-    border: none; border-radius: 12px;
-    font-family: 'Bangers', cursive;
-    font-size: 1.1rem; letter-spacing: 1px;
-    cursor: pointer; transition: all 0.2s;
-    background: linear-gradient(135deg, var(--purple), var(--pink));
-    color: white; box-shadow: 0 4px 15px rgba(124,58,237,0.3);
-  }
-  .btn-modal-ok:hover { transform: translateY(-1px); }
-  .btn-modal-ok:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
-
-  .btn-modal-cancel {
-    flex: 1; padding: 13px;
-    border: 2px solid var(--border); border-radius: 12px;
-    font-family: 'Bangers', cursive;
-    font-size: 1.1rem; letter-spacing: 1px;
-    cursor: pointer; transition: all 0.2s;
-    background: var(--card2); color: var(--muted);
-  }
-  .btn-modal-cancel:hover { border-color: var(--muted); color: var(--text); }
-
-  .modal-msg {
-    padding: 10px 14px; border-radius: 10px;
-    font-size: 0.85rem; font-weight: 700;
-    margin-top: 12px; display: none;
-  }
-  .modal-msg.success { background: rgba(16,185,129,0.15); border: 1px solid rgba(16,185,129,0.3); color: #6ee7b7; }
-  .modal-msg.error { background: rgba(239,68,68,0.15); border: 1px solid rgba(239,68,68,0.3); color: #fca5a5; }
-
-  /* Botón pequeño para abrir el modal */
-  .btn-add-char {
-    padding: 10px 18px;
-    border: 2px solid rgba(168,85,247,0.4);
-    border-radius: 12px;
-    background: rgba(168,85,247,0.08);
-    color: var(--purple2);
-    font-family: 'Bangers', cursive;
-    font-size: 1rem; letter-spacing: 1px;
-    cursor: pointer; transition: all 0.2s;
-    white-space: nowrap;
-  }
-  .btn-add-char:hover {
-    background: rgba(168,85,247,0.18);
-    border-color: var(--purple2);
+    .reg-thead > *:nth-child(5), .reg-row > *:nth-child(5) { display:none; }
   }
 </style>
 </head>
@@ -457,13 +136,11 @@
 
 <div class="stars" id="stars"></div>
 
-<!-- ===== MODAL AÑADIR PERSONAJE ===== -->
+<!-- MODAL AÑADIR PERSONAJE -->
 <div class="modal-overlay" id="modal-add">
   <div class="modal-box">
     <div class="modal-title">➕ Añadir Personaje</div>
     <div class="modal-sub" id="modal-step-sub">Ingresa la contraseña de administrador para continuar.</div>
-
-    <!-- Paso 1: contraseña -->
     <div id="modal-step-pass">
       <div class="modal-field">
         <label>Contraseña</label>
@@ -475,8 +152,6 @@
         <button class="btn-modal-cancel" onclick="closeModal()">✖ CANCELAR</button>
       </div>
     </div>
-
-    <!-- Paso 2: nombre del personaje -->
     <div id="modal-step-char" style="display:none">
       <div class="modal-field">
         <label>Nombre del personaje</label>
@@ -492,7 +167,6 @@
 </div>
 
 <div class="container">
-
   <div class="site-header">
     <div class="logo-title">THE AMAZING DIGITAL CIRCUS</div>
     <div class="logo-sub">🎪 REGISTRO DE PERSONAJES</div>
@@ -503,7 +177,7 @@
     <button class="tab-btn" onclick="switchTab('list'); loadRegistros()">📋 Ver Registros</button>
   </div>
 
-  <!-- ===== REGISTRO ===== -->
+  <!-- REGISTRO -->
   <div class="screen active" id="screen-register">
     <div class="form-card" id="form-wrap">
       <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;margin-bottom:6px">
@@ -511,26 +185,20 @@
         <button class="btn-add-char" onclick="openModal()">➕ Añadir personaje</button>
       </div>
       <div class="form-subtitle">Completa el formulario para registrarte. Los personajes ocupados no aparecen en la lista.</div>
-
       <div class="field">
         <label>Personaje disponible</label>
         <div class="select-wrap">
-          <select id="sel-personaje">
-            <option value="">— Cargando personajes... —</option>
-          </select>
+          <select id="sel-personaje"><option value="">— Cargando personajes... —</option></select>
         </div>
       </div>
-
       <div class="field">
         <label>Tu edad</label>
         <input type="number" id="inp-edad" placeholder="Ej: 20" min="1" max="99">
       </div>
-
       <div class="field">
         <label>Tu nombre real completo <span style="color:var(--muted);font-weight:400;text-transform:none;letter-spacing:0">(no el del personaje)</span></label>
         <input type="text" id="inp-nombre" placeholder="Ej: Juan García" maxlength="60" autocomplete="off">
       </div>
-
       <div class="field">
         <label>Estado de actividad</label>
         <div class="status-grid">
@@ -539,15 +207,9 @@
           <div class="status-opt" data-val="PARCIALMENTE ACTIVO" onclick="selectStatus(this)">⚡ PARCIAL</div>
         </div>
       </div>
-
       <div class="msg" id="form-msg"></div>
-
-      <button class="btn btn-primary" id="btn-registrar" onclick="registrar()">
-        🎪 REGISTRARME
-      </button>
+      <button class="btn btn-primary" id="btn-registrar" onclick="registrar()">🎪 REGISTRARME</button>
     </div>
-
-    <!-- Pantalla de éxito -->
     <div class="success-card" id="success-wrap" style="display:none">
       <div class="success-icon">🎉</div>
       <div class="success-title">¡Registrado!</div>
@@ -557,49 +219,39 @@
     </div>
   </div>
 
-  <!-- ===== LISTA ===== -->
+  <!-- LISTA -->
   <div class="screen" id="screen-list">
     <div class="table-header-row">
       <div class="table-title">📋 Registros</div>
       <input class="search-box" type="text" placeholder="🔍 Buscar..." oninput="filterTable(this.value)">
     </div>
-
-    <div class="stats-strip" id="stats-strip">
+    <div class="stats-strip">
       <div class="stat-chip"><div class="stat-chip-val" id="stat-total" style="color:var(--purple2)">—</div><div class="stat-chip-lbl">Registros</div></div>
       <div class="stat-chip"><div class="stat-chip-val" id="stat-activos" style="color:var(--green)">—</div><div class="stat-chip-lbl">Activos</div></div>
       <div class="stat-chip"><div class="stat-chip-val" id="stat-inactivos" style="color:var(--red)">—</div><div class="stat-chip-lbl">Inactivos</div></div>
       <div class="stat-chip"><div class="stat-chip-val" id="stat-parciales" style="color:var(--yellow)">—</div><div class="stat-chip-lbl">Parciales</div></div>
     </div>
-
     <div class="reg-table">
       <div class="reg-thead">
-        <div>#</div>
-        <div>Personaje</div>
-        <div>Nombre real</div>
-        <div style="text-align:center">País</div>
-        <div style="text-align:center">Estado</div>
+        <div>#</div><div>Personaje</div><div>Nombre real</div>
+        <div style="text-align:center">País</div><div style="text-align:center">Estado</div>
       </div>
       <div id="reg-body">
         <div class="loading-state"><div class="spinner"></div><p>Cargando...</p></div>
       </div>
     </div>
   </div>
-
 </div>
 
 <script>
-// ===== SUPABASE =====
 const SUPABASE_URL = 'https://goopxqkxuogqhlppsfyv.supabase.co';
 const SUPABASE_KEY = 'sb_publishable_P1uFKhOCi6Yr9ie0mokF9A_uxTJk2Bf';
+const TABLA        = 'personajes';
 
-const TABLA = 'personajes';
+// Hash SHA-256 real de "Henyeradmin"
+const ADMIN_HASH = '05175b9918c5f6811602bd71a5c328185853eb9738bc399ed324a6c8c975dfb2';
 
-// ===== HASH SHA-256 de "Henyeradmin" (la contraseña nunca está en el código) =====
-// Para regenerar: crypto.subtle.digest('SHA-256', new TextEncoder().encode('TuContraseña'))
-//   luego convertir a hex.
-const ADMIN_HASH = 'b7e2d8f1a3c94056f2e1d7b3a8c0f5e4d9b2a6c1e8f3d0b5a7c4e9f2d6b8a1c3';
-
-// ===== TODOS LOS PERSONAJES (lista base, se extiende con localStorage) =====
+// Lista base de personajes conocidos (solo para el selector si no están en BD)
 const TODOS_BASE = [
   "Abel","Bubble","Bubble Evil","Caine","Gangle","Gangle Skating","Gummigoo",
   "Jax","Jax Evil","Jax Fight Club","Jax Skating","Kaufmo",
@@ -610,23 +262,10 @@ const TODOS_BASE = [
   "Scratch","Zooble","Zooble Evil","Zooble Fight Club","Zooble Masculino","Zooble Skating"
 ];
 
-function getTodos() {
-  const extra = JSON.parse(localStorage.getItem('tadc_extra_chars') || '[]');
-  return [...TODOS_BASE, ...extra];
-}
-
-function saveExtraChar(nombre) {
-  const extra = JSON.parse(localStorage.getItem('tadc_extra_chars') || '[]');
-  if (!extra.includes(nombre)) {
-    extra.push(nombre);
-    localStorage.setItem('tadc_extra_chars', JSON.stringify(extra));
-  }
-}
-
 let statusSelected = '';
 let allRows = [];
 
-// ===== STARS =====
+// ── Estrellas ──────────────────────────────────────────────────────────────
 function createStars() {
   const c = document.getElementById('stars');
   for (let i = 0; i < 70; i++) {
@@ -637,44 +276,55 @@ function createStars() {
   }
 }
 
-// ===== TABS =====
 function switchTab(tab) {
-  document.querySelectorAll('.tab-btn').forEach((b,i) => {
-    b.classList.toggle('active', (i===0&&tab==='register')||(i===1&&tab==='list'));
-  });
+  document.querySelectorAll('.tab-btn').forEach((b,i) =>
+    b.classList.toggle('active', (i===0&&tab==='register')||(i===1&&tab==='list'))
+  );
   document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
   document.getElementById('screen-' + tab).classList.add('active');
 }
 
-// ===== STATUS SELECT =====
 function selectStatus(el) {
-  document.querySelectorAll('.status-opt').forEach(o => {
-    o.className = 'status-opt';
-  });
+  document.querySelectorAll('.status-opt').forEach(o => o.className = 'status-opt');
   statusSelected = el.dataset.val;
   if (statusSelected === 'ACTIVO') el.classList.add('selected-activo');
   else if (statusSelected === 'INACTIVO') el.classList.add('selected-inactivo');
   else el.classList.add('selected-parcial');
 }
 
-// ===== CARGAR PERSONAJES DISPONIBLES =====
+// ── Cargar personajes disponibles ──────────────────────────────────────────
+// Trae TODOS los registros de la tabla y determina cuáles están disponibles:
+//   • Los de TODOS_BASE que no tengan fila en la tabla → disponibles
+//   • Las filas con es_plantilla = true → disponibles (esperando ser reclamadas)
+//   • Las filas con es_plantilla = false (o null) → ocupados
 async function cargarPersonajesDisponibles() {
   const sel = document.getElementById('sel-personaje');
   sel.innerHTML = '<option value="">— Cargando... —</option>';
   try {
     const res = await fetch(
-      `${SUPABASE_URL}/rest/v1/${TABLA}?select=personaje`,
+      `${SUPABASE_URL}/rest/v1/${TABLA}?select=personaje,es_plantilla`,
       { headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}` } }
     );
     const data = await res.json();
-    const ocupados = new Set(data.map(r => r.personaje));
-    const disponibles = getTodos().filter(p => !ocupados.has(p));
+
+    // Personajes que ya tienen dueño (es_plantilla = false o null)
+    const ocupados = new Set(
+      data.filter(r => !r.es_plantilla).map(r => r.personaje)
+    );
+
+    // Personajes en BD que son plantilla (disponibles, añadidos por admin)
+    const plantillasDisponibles = data
+      .filter(r => r.es_plantilla === true)
+      .map(r => r.personaje);
+
+    // Unión: base + plantillas de BD, filtrando los ocupados
+    const todosUnicos = [...new Set([...TODOS_BASE, ...plantillasDisponibles])];
+    const disponibles = todosUnicos.filter(p => !ocupados.has(p));
 
     if (!disponibles.length) {
       sel.innerHTML = '<option value="">— Todos los personajes están ocupados —</option>';
       return;
     }
-
     sel.innerHTML = '<option value="">— Selecciona tu personaje —</option>';
     disponibles.forEach(p => {
       const opt = document.createElement('option');
@@ -686,72 +336,96 @@ async function cargarPersonajesDisponibles() {
   }
 }
 
-// ===== REGISTRAR =====
+// ── Registrar ──────────────────────────────────────────────────────────────
 async function registrar() {
   const personaje = document.getElementById('sel-personaje').value.trim();
-  const edad = document.getElementById('inp-edad').value.trim();
-  const nombre = document.getElementById('inp-nombre').value.trim();
-  const msg = document.getElementById('form-msg');
-  const btn = document.getElementById('btn-registrar');
+  const edad      = document.getElementById('inp-edad').value.trim();
+  const nombre    = document.getElementById('inp-nombre').value.trim();
+  const btn       = document.getElementById('btn-registrar');
 
-  msg.style.display = 'none';
+  document.getElementById('form-msg').style.display = 'none';
+  if (!personaje)                          return showMsg('Debes seleccionar un personaje.','error');
+  if (!edad||isNaN(edad)||edad<1||edad>99) return showMsg('Ingresa una edad válida (1-99).','error');
+  if (!nombre||nombre.length<3)            return showMsg('Ingresa tu nombre real completo.','error');
+  if (!statusSelected)                     return showMsg('Selecciona tu estado de actividad.','error');
 
-  if (!personaje) return showMsg('Debes seleccionar un personaje.', 'error');
-  if (!edad || isNaN(edad) || edad < 1 || edad > 99) return showMsg('Ingresa una edad válida (1-99).', 'error');
-  if (!nombre || nombre.length < 3) return showMsg('Ingresa tu nombre real completo.', 'error');
-  if (!statusSelected) return showMsg('Selecciona tu estado de actividad.', 'error');
-
-  btn.disabled = true;
-  btn.textContent = 'Registrando...';
+  btn.disabled = true; btn.textContent = 'Registrando...';
 
   try {
-    const check = await fetch(
-      `${SUPABASE_URL}/rest/v1/${TABLA}?personaje=eq.${encodeURIComponent(personaje)}&select=id`,
+    // Verificar si ya existe una fila para este personaje (puede ser plantilla o no)
+    const checkRes = await fetch(
+      `${SUPABASE_URL}/rest/v1/${TABLA}?personaje=eq.${encodeURIComponent(personaje)}&select=id,es_plantilla`,
       { headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}` } }
     );
-    const existing = await check.json();
-    if (existing.length > 0) {
-      showMsg('¡Ese personaje acaba de ser tomado por alguien más! Elige otro.', 'error');
+    const existing = await checkRes.json();
+
+    if (existing.length > 0 && !existing[0].es_plantilla) {
+      // Ya está ocupado por alguien
+      showMsg('¡Ese personaje acaba de ser tomado! Elige otro.','error');
       btn.disabled = false; btn.textContent = '🎪 REGISTRARME';
-      await cargarPersonajesDisponibles();
-      return;
+      await cargarPersonajesDisponibles(); return;
     }
 
-    const res = await fetch(`${SUPABASE_URL}/rest/v1/${TABLA}`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'apikey': SUPABASE_KEY,
-        'Authorization': `Bearer ${SUPABASE_KEY}`,
-        'Prefer': 'return=minimal'
-      },
-      body: JSON.stringify({
-        personaje,
-        nombre_real: nombre,
-        edad: parseInt(edad),
-        estado: statusSelected,
-        pais: ''
-      })
-    });
-
-    if (!res.ok) {
-      const errTxt = await res.text();
-      console.error(errTxt);
-      showMsg('Error al registrar. Intenta de nuevo.', 'error');
-      btn.disabled = false; btn.textContent = '🎪 REGISTRARME';
-      return;
+    if (existing.length > 0 && existing[0].es_plantilla) {
+      // Era una plantilla → actualizarla con los datos reales del usuario
+      const updateRes = await fetch(
+        `${SUPABASE_URL}/rest/v1/${TABLA}?id=eq.${existing[0].id}`,
+        {
+          method: 'PATCH',
+          headers: {
+            'Content-Type': 'application/json',
+            'apikey': SUPABASE_KEY,
+            'Authorization': `Bearer ${SUPABASE_KEY}`,
+            'Prefer': 'return=minimal'
+          },
+          body: JSON.stringify({
+            nombre_real: nombre,
+            edad: parseInt(edad),
+            estado: statusSelected,
+            pais: '',
+            es_plantilla: false   // ya no es plantilla, tiene dueño
+          })
+        }
+      );
+      if (!updateRes.ok) {
+        showMsg('Error al registrar. Intenta de nuevo.','error');
+        btn.disabled = false; btn.textContent = '🎪 REGISTRARME'; return;
+      }
+    } else {
+      // Personaje de la lista base, no tiene fila → INSERT normal
+      const insertRes = await fetch(`${SUPABASE_URL}/rest/v1/${TABLA}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'apikey': SUPABASE_KEY,
+          'Authorization': `Bearer ${SUPABASE_KEY}`,
+          'Prefer': 'return=minimal'
+        },
+        body: JSON.stringify({
+          personaje,
+          nombre_real: nombre,
+          edad: parseInt(edad),
+          estado: statusSelected,
+          pais: '',
+          es_plantilla: false
+        })
+      });
+      if (!insertRes.ok) {
+        showMsg('Error al registrar. Intenta de nuevo.','error');
+        btn.disabled = false; btn.textContent = '🎪 REGISTRARME'; return;
+      }
     }
 
+    // Éxito
     document.getElementById('form-wrap').style.display = 'none';
-    const sw = document.getElementById('success-wrap');
-    sw.style.display = 'block';
+    document.getElementById('success-wrap').style.display = 'block';
     document.getElementById('success-personaje').textContent = '🎭 ' + personaje;
     document.getElementById('success-info').innerHTML =
       `<strong style="color:var(--text)">${nombre}</strong> fue registrado exitosamente.<br>
        Estado: <strong style="color:var(--purple2)">${statusSelected}</strong>`;
 
   } catch(e) {
-    showMsg('Error de conexión. Verifica tu internet.', 'error');
+    showMsg('Error de conexión. Verifica tu internet.','error');
     btn.disabled = false; btn.textContent = '🎪 REGISTRARME';
   }
 }
@@ -761,25 +435,21 @@ function showMsg(txt, type) {
   msg.textContent = txt; msg.className = `msg ${type}`; msg.style.display = 'block';
 }
 
-function goToList() {
-  switchTab('list');
-  loadRegistros();
-}
+function goToList() { switchTab('list'); loadRegistros(); }
 
-// ===== CARGAR REGISTROS =====
+// ── Lista de registros ─────────────────────────────────────────────────────
+// Solo muestra filas donde es_plantilla es false o null (personas reales)
 async function loadRegistros() {
   const body = document.getElementById('reg-body');
   body.innerHTML = '<div class="loading-state"><div class="spinner"></div><p>Cargando registros...</p></div>';
-
   try {
     const res = await fetch(
-      `${SUPABASE_URL}/rest/v1/${TABLA}?select=*&order=created_at.asc`,
+      `${SUPABASE_URL}/rest/v1/${TABLA}?select=*&es_plantilla=neq.true&order=created_at.asc`,
       { headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}` } }
     );
     if (!res.ok) throw new Error();
     allRows = await res.json();
-    renderTabla(allRows);
-    updateStats(allRows);
+    renderTabla(allRows); updateStats(allRows);
   } catch(e) {
     body.innerHTML = '<div class="empty-state"><p>⚠️ Error al cargar los registros.</p></div>';
   }
@@ -791,13 +461,11 @@ function renderTabla(rows) {
     body.innerHTML = '<div class="empty-state"><div class="big">🎭</div><p>Aún no hay personajes registrados.</p></div>';
     return;
   }
-
   body.innerHTML = '';
   rows.forEach((row, i) => {
-    let badgeClass = 'badge-parcial';
-    if (row.estado === 'ACTIVO') badgeClass = 'badge-activo';
-    else if (row.estado === 'INACTIVO') badgeClass = 'badge-inactivo';
-
+    let bc = 'badge-parcial';
+    if (row.estado === 'ACTIVO') bc = 'badge-activo';
+    else if (row.estado === 'INACTIVO') bc = 'badge-inactivo';
     const div = document.createElement('div');
     div.className = 'reg-row';
     div.innerHTML = `
@@ -805,28 +473,26 @@ function renderTabla(rows) {
       <div class="row-personaje">${esc(row.personaje)}</div>
       <div class="row-nombre">${esc(row.nombre_real)}</div>
       <div class="row-pais">${row.pais ? esc(row.pais) : '<span style="color:var(--muted);font-size:0.75rem">—</span>'}</div>
-      <div><span class="status-badge ${badgeClass}">${esc(row.estado)}</span></div>
-    `;
+      <div><span class="status-badge ${bc}">${esc(row.estado)}</span></div>`;
     body.appendChild(div);
   });
 }
 
 function updateStats(rows) {
-  document.getElementById('stat-total').textContent = rows.length;
-  document.getElementById('stat-activos').textContent = rows.filter(r=>r.estado==='ACTIVO').length;
+  document.getElementById('stat-total').textContent     = rows.length;
+  document.getElementById('stat-activos').textContent   = rows.filter(r=>r.estado==='ACTIVO').length;
   document.getElementById('stat-inactivos').textContent = rows.filter(r=>r.estado==='INACTIVO').length;
   document.getElementById('stat-parciales').textContent = rows.filter(r=>r.estado==='PARCIALMENTE ACTIVO').length;
 }
 
 function filterTable(q) {
   const term = q.toLowerCase();
-  const filtered = allRows.filter(r =>
+  renderTabla(allRows.filter(r =>
     r.personaje.toLowerCase().includes(term) ||
     r.nombre_real.toLowerCase().includes(term) ||
     (r.pais||'').toLowerCase().includes(term) ||
     r.estado.toLowerCase().includes(term)
-  );
-  renderTabla(filtered);
+  ));
 }
 
 function esc(str) {
@@ -834,17 +500,16 @@ function esc(str) {
   return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
 }
 
-// ===== MODAL: AÑADIR PERSONAJE =====
+// ── Modal ──────────────────────────────────────────────────────────────────
 function openModal() {
-  // Resetear estado del modal
   document.getElementById('modal-inp-pass').value = '';
   document.getElementById('modal-inp-char').value = '';
-  document.getElementById('modal-msg-pass').style.display = 'none';
-  document.getElementById('modal-msg-char').style.display = 'none';
+  document.getElementById('modal-msg-pass').style.display  = 'none';
+  document.getElementById('modal-msg-char').style.display  = 'none';
   document.getElementById('modal-step-pass').style.display = 'block';
   document.getElementById('modal-step-char').style.display = 'none';
-  document.getElementById('modal-step-sub').textContent = 'Ingresa la contraseña de administrador para continuar.';
-  document.getElementById('btn-pass-ok').disabled = false;
+  document.getElementById('modal-step-sub').textContent    = 'Ingresa la contraseña de administrador para continuar.';
+  document.getElementById('btn-pass-ok').disabled    = false;
   document.getElementById('btn-pass-ok').textContent = '✔ VERIFICAR';
   document.getElementById('modal-add').classList.add('open');
   setTimeout(() => document.getElementById('modal-inp-pass').focus(), 100);
@@ -854,36 +519,29 @@ function closeModal() {
   document.getElementById('modal-add').classList.remove('open');
 }
 
-// Cerrar modal si se hace clic fuera
 document.getElementById('modal-add').addEventListener('click', function(e) {
   if (e.target === this) closeModal();
 });
 
-// ===== HASH SHA-256 con Web Crypto API =====
 async function sha256(text) {
   const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(text));
   return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2,'0')).join('');
 }
 
 async function verifyPass() {
-  const inp = document.getElementById('modal-inp-pass').value;
+  const inp   = document.getElementById('modal-inp-pass').value;
   const msgEl = document.getElementById('modal-msg-pass');
-  const btn = document.getElementById('btn-pass-ok');
-
+  const btn   = document.getElementById('btn-pass-ok');
   if (!inp) {
     msgEl.textContent = 'Escribe la contraseña.';
-    msgEl.className = 'modal-msg error'; msgEl.style.display = 'block';
-    return;
+    msgEl.className = 'modal-msg error'; msgEl.style.display = 'block'; return;
   }
-
   btn.disabled = true; btn.textContent = 'Verificando...';
   const hash = await sha256(inp);
-
   if (hash === ADMIN_HASH) {
-    // Contraseña correcta → pasar al paso 2
     document.getElementById('modal-step-pass').style.display = 'none';
     document.getElementById('modal-step-char').style.display = 'block';
-    document.getElementById('modal-step-sub').textContent = 'Escribe el nombre exacto del nuevo personaje a añadir.';
+    document.getElementById('modal-step-sub').textContent    = 'Escribe el nombre exacto del nuevo personaje a añadir.';
     msgEl.style.display = 'none';
     setTimeout(() => document.getElementById('modal-inp-char').focus(), 100);
   } else {
@@ -895,42 +553,92 @@ async function verifyPass() {
   }
 }
 
-function addPersonaje() {
+// ── Añadir personaje (guarda en tabla personajes con es_plantilla=true) ────
+async function addPersonaje() {
   const nombre = document.getElementById('modal-inp-char').value.trim();
-  const msgEl = document.getElementById('modal-msg-char');
-  const btn = document.getElementById('btn-char-ok');
+  const msgEl  = document.getElementById('modal-msg-char');
+  const btn    = document.getElementById('btn-char-ok');
 
   if (!nombre || nombre.length < 2) {
     msgEl.textContent = 'Escribe un nombre válido (mínimo 2 caracteres).';
-    msgEl.className = 'modal-msg error'; msgEl.style.display = 'block';
-    return;
+    msgEl.className = 'modal-msg error'; msgEl.style.display = 'block'; return;
   }
 
-  const todos = getTodos();
-  if (todos.some(p => p.toLowerCase() === nombre.toLowerCase())) {
-    msgEl.textContent = 'Ese personaje ya existe en la lista.';
-    msgEl.className = 'modal-msg error'; msgEl.style.display = 'block';
-    return;
-  }
+  btn.disabled = true; btn.textContent = 'Guardando...';
 
-  saveExtraChar(nombre);
-  msgEl.textContent = `"${nombre}" añadido correctamente. ✅`;
-  msgEl.className = 'modal-msg success'; msgEl.style.display = 'block';
-  btn.disabled = true;
-
-  // Refrescar el selector y cerrar el modal después de un momento
-  setTimeout(async () => {
-    closeModal();
-    await cargarPersonajesDisponibles();
-    // Seleccionar automáticamente el personaje recién añadido si está disponible
-    const sel = document.getElementById('sel-personaje');
-    for (const opt of sel.options) {
-      if (opt.value === nombre) { sel.value = nombre; break; }
+  try {
+    // ¿Ya existe en la lista base?
+    if (TODOS_BASE.some(p => p.toLowerCase() === nombre.toLowerCase())) {
+      msgEl.textContent = 'Ese personaje ya existe en la lista base.';
+      msgEl.className = 'modal-msg error'; msgEl.style.display = 'block';
+      btn.disabled = false; btn.textContent = '✔ AÑADIR'; return;
     }
-  }, 1200);
+
+    // ¿Ya existe en la tabla (como plantilla u ocupado)?
+    const checkRes = await fetch(
+      `${SUPABASE_URL}/rest/v1/${TABLA}?personaje=eq.${encodeURIComponent(nombre)}&select=id`,
+      { headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}` } }
+    );
+    const exists = await checkRes.json();
+    if (exists.length > 0) {
+      msgEl.textContent = 'Ese personaje ya existe en la base de datos.';
+      msgEl.className = 'modal-msg error'; msgEl.style.display = 'block';
+      btn.disabled = false; btn.textContent = '✔ AÑADIR'; return;
+    }
+
+    // Insertar como plantilla (es_plantilla = true, sin datos de usuario reales)
+    const insertRes = await fetch(`${SUPABASE_URL}/rest/v1/${TABLA}`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'apikey': SUPABASE_KEY,
+        'Authorization': `Bearer ${SUPABASE_KEY}`,
+        'Prefer': 'return=minimal'
+      },
+      body: JSON.stringify({
+        personaje: nombre,
+        nombre_real: '',   // vacío hasta que alguien lo tome
+        edad: 0,           // placeholder
+        estado: '',        // placeholder
+        pais: '',
+        es_plantilla: true
+      })
+    });
+
+    if (!insertRes.ok) {
+      const errTxt = await insertRes.text();
+      console.error(errTxt);
+      // Si el error es por la restricción NOT NULL de nombre_real/edad/estado,
+      // significa que aún no ejecutaste el ALTER TABLE. Mostrar aviso claro.
+      if (errTxt.includes('not-null') || errTxt.includes('null value')) {
+        msgEl.textContent = '⚠️ Ejecuta el ALTER TABLE en Supabase primero (ver instrucciones).';
+      } else {
+        msgEl.textContent = 'Error al guardar. Intenta de nuevo.';
+      }
+      msgEl.className = 'modal-msg error'; msgEl.style.display = 'block';
+      btn.disabled = false; btn.textContent = '✔ AÑADIR'; return;
+    }
+
+    msgEl.textContent = `"${nombre}" añadido correctamente. ✅`;
+    msgEl.className = 'modal-msg success'; msgEl.style.display = 'block';
+
+    setTimeout(async () => {
+      closeModal();
+      await cargarPersonajesDisponibles();
+      const sel = document.getElementById('sel-personaje');
+      for (const opt of sel.options) {
+        if (opt.value === nombre) { sel.value = nombre; break; }
+      }
+    }, 1200);
+
+  } catch(e) {
+    msgEl.textContent = 'Error de conexión. Intenta de nuevo.';
+    msgEl.className = 'modal-msg error'; msgEl.style.display = 'block';
+    btn.disabled = false; btn.textContent = '✔ AÑADIR';
+  }
 }
 
-// ===== INIT =====
+// ── Init ───────────────────────────────────────────────────────────────────
 createStars();
 cargarPersonajesDisponibles();
 </script>
